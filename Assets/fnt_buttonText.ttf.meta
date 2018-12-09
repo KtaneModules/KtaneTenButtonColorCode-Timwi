@@ -1,0 +1,21 @@
+fileFormatVersion: 2
+guid: e66ee80b2a0cbe54b84d3dba12427385
+timeCreated: 1544083198
+licenseType: Free
+TrueTypeFontImporter:
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontName: Filbert Color Personal Use
+  fontNames:
+  - Filbert Color Personal Use
+  fallbackFontReferences: []
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
