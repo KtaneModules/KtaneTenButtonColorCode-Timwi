@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using KMBombInfoHelper;
@@ -17,20 +15,14 @@ public class scr_colorCode : MonoBehaviour {
 	public KMSelectable ModuleSelect, SubmitButton;
 	public GameObject[] ModuleLights;
 
-	Color[] buttonColors = {
-		new Color32(255, 58, 58, 255),
-		new Color32(0, 226, 26, 255),
-		new Color32(0, 136, 255, 255)
-	};
-
+	readonly Color[] buttonColors = { new Color32(255, 58, 58, 255), new Color32(0, 226, 26, 255), new Color32(0, 136, 255, 255) };
 	int[] nowColors = new int[10];
-	int[] prevColors = new int[10];
+	readonly int[] prevColors = new int[10];
 	int[] solColors = new int[10];
+
 	string serialNum = "";
 	int initRules;
-
 	delegate bool checkRules(int x);
-
 	checkRules[] ruleList;
 	bool nextStage;
 	bool solvedFirst;
@@ -73,8 +65,8 @@ public class scr_colorCode : MonoBehaviour {
 		ruleList = new checkRules [4] {
 			((x) => solColors[x] == solColors[x + 1]),
 			((x) => solColors[x] == solColors[x + 5]),
-			((x) => solColors[x] == solColors[x + 1] && solColors[x] == solColors[x + 2] && solColors[x + 1] == solColors[x + 2]),
-			((x) => solColors[x] == solColors[x + 1] && solColors[x] == solColors[x + 5] && solColors[x] == solColors[x + 6] && solColors[x + 1] == solColors[x + 5] && solColors[x + 1] == solColors[x + 6] && solColors[x + 5] == solColors[x + 6])
+			((x) => solColors[x] == solColors[x + 1] && solColors[x + 1] == solColors[x + 2]),
+			((x) => solColors[x] == solColors[x + 1] && solColors[x + 1] == solColors[x + 5] && solColors[x + 5] == solColors[x + 6])
 		};
 
 		SetRules();
@@ -113,7 +105,7 @@ public class scr_colorCode : MonoBehaviour {
 			var logColors = "";
 
 			foreach (int colors in nowColors) {
-				logColors += new [] { "Red ", "Green ", "Blue " }[colors];
+				logColors += new[] { "Red ", "Green ", "Blue " }[colors];
 			}
 
 			Debug.LogFormat(@"[Ten-Button Color Code #{0}] The initial colors for stage {1} are: {2}", moduleId, (solvedFirst) ? "2" : "1", logColors);
@@ -368,7 +360,7 @@ public class scr_colorCode : MonoBehaviour {
 			return pressList.ToArray();
 		}
 
-		if (Regex.IsMatch(command, @"submit|sub|s")) {
+		if (Regex.IsMatch(command, @"^(submit|sub|s)$")) {
 			return new[] { SubmitButton };
 		}
 
