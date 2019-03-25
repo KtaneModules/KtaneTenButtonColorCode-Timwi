@@ -142,7 +142,7 @@ namespace Assets.Editor
 
             List<String> missionIDs = KMMissionTableOfContentsEditor.GetAllMissions().Where(x => x != null).Select(x => x.ID).ToList();
 
-            for (int i = 0; i < missionIDs.Count; i++)
+            for (var i = 0; i < missionIDs.Count; i++)
             {
                 menu.AddItem(new GUIContent(missionIDs[i]),
                 false,

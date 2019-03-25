@@ -410,7 +410,7 @@ public class FakeBombInfo : MonoBehaviour
         {
             const int numWidgets = 5;
             widgets = new Widget[numWidgets];
-            for (int a = 0; a < numWidgets; a++) 
+            for (var a = 0; a < numWidgets; a++) 
             {
                 int r = Random.Range(0, 3);
                 if (r == 0) widgets[a] = new PortWidget();
@@ -418,9 +418,9 @@ public class FakeBombInfo : MonoBehaviour
                 else widgets[a] = new BatteryWidget();
             }
             string str1 = string.Empty;
-            for (int index = 0; index < 2; ++index) str1 = str1 + SerialNumberPossibleCharArray[Random.Range(0, SerialNumberPossibleCharArray.Length)];
+            for (var index = 0; index < 2; ++index) str1 = str1 + SerialNumberPossibleCharArray[Random.Range(0, SerialNumberPossibleCharArray.Length)];
             string str2 = str1 + (object)Random.Range(0, 10);
-            for (int index = 3; index < 5; ++index) str2 = str2 + SerialNumberPossibleCharArray[Random.Range(0, SerialNumberPossibleCharArray.Length - 10)];
+            for (var index = 3; index < 5; ++index) str2 = str2 + SerialNumberPossibleCharArray[Random.Range(0, SerialNumberPossibleCharArray.Length - 10)];
             serial = str2 + Random.Range(0, 10);
 
             Debug.Log("Serial: " + serial);
@@ -430,15 +430,15 @@ public class FakeBombInfo : MonoBehaviour
             if (config.SerialNumberType == SerialNumberType.RANDOM_NORMAL)
             {
                 string str1 = string.Empty;
-                for (int index = 0; index < 2; ++index) str1 = str1 + SerialNumberPossibleCharArray[Random.Range(0, SerialNumberPossibleCharArray.Length)];
+                for (var index = 0; index < 2; ++index) str1 = str1 + SerialNumberPossibleCharArray[Random.Range(0, SerialNumberPossibleCharArray.Length)];
                 string str2 = str1 + (object)Random.Range(0, 10);
-                for (int index = 3; index < 5; ++index) str2 = str2 + SerialNumberPossibleCharArray[Random.Range(0, SerialNumberPossibleCharArray.Length - 10)];
+                for (var index = 3; index < 5; ++index) str2 = str2 + SerialNumberPossibleCharArray[Random.Range(0, SerialNumberPossibleCharArray.Length - 10)];
                 serial = str2 + Random.Range(0, 10);
             } 
             else if (config.SerialNumberType == SerialNumberType.RANDOM_ANY)
             {
                 string res = string.Empty;
-                for (int index = 0; index < 6; ++index) res = res + SerialNumberPossibleCharArray[Random.Range(0, SerialNumberPossibleCharArray.Length)];
+                for (var index = 0; index < 6; ++index) res = res + SerialNumberPossibleCharArray[Random.Range(0, SerialNumberPossibleCharArray.Length)];
                 serial = res;
             }
             else
@@ -465,7 +465,7 @@ public class FakeBombInfo : MonoBehaviour
                     switch (widgetConfig.Type)
                     {
                         case WidgetType.BATTERY:
-                            for (int i = 0; i < widgetConfig.Count; i++)
+                            for (var i = 0; i < widgetConfig.Count; i++)
                             {
                                 if (widgetConfig.BatteryType == BatteryType.CUSTOM)
                                 {
@@ -492,7 +492,7 @@ public class FakeBombInfo : MonoBehaviour
                             }
                             break;
                         case WidgetType.PORT_PLATE:
-                            for (int i = 0; i < widgetConfig.Count; i++)
+                            for (var i = 0; i < widgetConfig.Count; i++)
                             {
                                 List<string> ports = new List<string>();
                                 if (widgetConfig.PortPlateType == PortPlateType.CUSTOM)
@@ -541,7 +541,7 @@ public class FakeBombInfo : MonoBehaviour
                             }
                             break;
                         case WidgetType.CUSTOM:
-                            for (int i = 0; i < widgetConfig.Count; i++)
+                            for (var i = 0; i < widgetConfig.Count; i++)
                             {
                                 widgetsResult.Add(new CustomWidget(widgetConfig.CustomQueryKey, widgetConfig.CustomData));
                             }
@@ -555,7 +555,7 @@ public class FakeBombInfo : MonoBehaviour
             }
             foreach (THWidget randIndWidget in RandomWidgets)
             {
-                for (int i = 0; i < randIndWidget.Count; i++)
+                for (var i = 0; i < randIndWidget.Count; i++)
                 {
                     int r = Random.Range(0, 3);
                     if (r == 0) widgetsResult.Add(new BatteryWidget());
@@ -665,7 +665,7 @@ public class TestHarness : MonoBehaviour
         fakeInfo.needyModules = needyModules.ToList();
         currentSelectable.Children = new TestSelectable[modules.Length + needyModules.Length];
         currentSelectable.ChildRowLength = currentSelectable.Children.Length;
-        for (int i = 0; i < modules.Length; i++)
+        for (var i = 0; i < modules.Length; i++)
         {
             KMBombModule mod = modules[i];
 
@@ -700,7 +700,7 @@ public class TestHarness : MonoBehaviour
             };
         }
 
-        for (int i = 0; i < needyModules.Length; i++)
+        for (var i = 0; i < needyModules.Length; i++)
         {
             TestSelectable testSelectable = needyModules[i].GetComponent<TestSelectable>();
             currentSelectable.Children[modules.Length + i] = testSelectable;
@@ -879,7 +879,7 @@ public class TestHarness : MonoBehaviour
             TestSelectable testSelectable = selectable.gameObject.GetComponent<TestSelectable>();
             testSelectable.Parent = selectable.Parent ? selectable.Parent.GetComponent<TestSelectable>() : null;
             testSelectable.Children = new TestSelectable[selectable.Children.Length];
-            for (int i = 0; i < selectable.Children.Length; i++)
+            for (var i = 0; i < selectable.Children.Length; i++)
             {
                 if (selectable.Children[i] != null)
                 {

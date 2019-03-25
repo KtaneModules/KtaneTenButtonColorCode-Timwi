@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using KMBombInfoHelper;
@@ -19,13 +20,13 @@ public class scr_colorCode : MonoBehaviour {
 	int[] nowColors = new int[10];
 	readonly int[] prevColors = new int[10];
 	int[] solColors = new int[10];
+    readonly string[] colorNames = { "Red", "Green", "Blue" };
 
 	string serialNum = "";
 	int initRules;
 	delegate bool checkRules(int x);
 	checkRules[] ruleList;
-	bool nextStage;
-	bool solvedFirst;
+	bool nextStage, solvedFirst;
 
 	bool moduleSolved;
 
@@ -36,8 +37,8 @@ public class scr_colorCode : MonoBehaviour {
 		moduleId = moduleIdCounter++;
 		ShuffleColors(false);
 
-		for (int i = 0; i < 10; i++) {
-			int j = i;
+		for (var i = 0; i < 10; i++) {
+			var j = i;
 
 			ModuleButtons[i].OnInteract += delegate() {
 				OnButtonPress(j);
@@ -55,18 +56,17 @@ public class scr_colorCode : MonoBehaviour {
 
 		var lightScalar = transform.lossyScale.x;
 
-		for (int i = 0; i < ModuleLights.Length; i++) {
+		for (var i = 0; i < ModuleLights.Length; i++)
 			ModuleLights[i].transform.GetChild(0).GetComponent<Light>().range *= lightScalar;
-		}
 
 		serialNum = BombInfo.GetSerialNumber();
-		initRules = int.Parse(serialNum[5].ToString());
+		initRules = int.Parse(serialNum.Last().ToString());
 		Debug.LogFormat(@"[Ten-Button Color Code #{0}] Starting rule number in stage 1 is: {1}", moduleId, initRules);
-		ruleList = new checkRules [4] {
-			((x) => solColors[x] == solColors[x + 1]),
-			((x) => solColors[x] == solColors[x + 5]),
-			((x) => solColors[x] == solColors[x + 1] && solColors[x + 1] == solColors[x + 2]),
-			((x) => solColors[x] == solColors[x + 1] && solColors[x + 1] == solColors[x + 5] && solColors[x + 5] == solColors[x + 6])
+		ruleList = new checkRules[4] {
+			(x => solColors[x] == solColors[x + 1]),
+			(x => solColors[x] == solColors[x + 5]),
+			(x => solColors[x] == solColors[x + 1] && solColors[x + 1] == solColors[x + 2]),
+			(x => solColors[x] == solColors[x + 1] && solColors[x + 1] == solColors[x + 5] && solColors[x + 5] == solColors[x + 6])
 		};
 
 		SetRules();
@@ -75,13 +75,7 @@ public class scr_colorCode : MonoBehaviour {
 	void Update() {
 		if (nextStage) {
 			ShuffleColors(false);
-			initRules = 0;
-
-			for (int i = 0; i < 6; i++) {
-				initRules += (char.IsDigit(serialNum[i])) ? int.Parse(serialNum[i].ToString()) : 0;
-			}
-				
-			initRules %= 10;
+            initRules = BombInfo.GetSerialNumberNumbers().Sum() % 10;
 			Debug.LogFormat(@"[Ten-Button Color Code #{0}] Starting rule number in stage 2 is: {1}", moduleId, initRules);
 			SetRules();
 			nextStage = false;
@@ -89,12 +83,10 @@ public class scr_colorCode : MonoBehaviour {
 	}
 
 	void ShuffleColors(bool returnPrev) {
-		for (int i = 0; i < 10; i++) {
+		for (var i = 0; i < 10; i++) {
 			if (!returnPrev) {
-				nowColors[i] = Random.Range(0, 3);
-				prevColors[i] = nowColors[i];
-				solColors[i] = nowColors[i];
-			} else {
+                solColors[i] = prevColors[i] = nowColors[i] = Random.Range(0, 3);
+            } else {
 				nowColors[i] = prevColors[i];
 			}
 
@@ -102,18 +94,12 @@ public class scr_colorCode : MonoBehaviour {
 		}
 
 		if (!returnPrev) {
-			var logColors = "";
-
-			foreach (int colors in nowColors) {
-				logColors += new[] { "Red ", "Green ", "Blue " }[colors];
-			}
-
-			Debug.LogFormat(@"[Ten-Button Color Code #{0}] The initial colors for stage {1} are: {2}", moduleId, (solvedFirst) ? "2" : "1", logColors);
+			Debug.LogFormat(@"[Ten-Button Color Code #{0}] The initial colors for stage {1} are: {2}", moduleId, (solvedFirst) ? "2" : "1", string.Join(" ", nowColors.Select(x => colorNames[x]).ToArray()));
 		}
 	}
 
 	void SetRules() {
-		for (int i = 0; i < 11; i++) {
+		for (var i = 0; i < 11; i++) {
 			if (!solvedFirst) {
 				GetRules((initRules + i) % 10);
 			} else {
@@ -121,13 +107,7 @@ public class scr_colorCode : MonoBehaviour {
 			}
 		}
 
-		var logSol = "";
-
-		foreach (int solution in solColors) {
-			logSol += new[] { "Red ", "Green ", "Blue " }[solution];
-		}
-
-		Debug.LogFormat(@"[Ten-Button Color Code #{0}] The solution for stage {1} is: {2}", moduleId, (solvedFirst) ? 2 : 1, logSol);
+		Debug.LogFormat(@"[Ten-Button Color Code #{0}] The solution for stage {1} is: {2}", moduleId, (solvedFirst) ? 2 : 1, string.Join(" ", solColors.Select(x => colorNames[x]).ToArray()));
 	}
 
 	void GetRules(int rule) {
@@ -139,7 +119,7 @@ public class scr_colorCode : MonoBehaviour {
 				var getInit = initRules;
 				getInit = (getInit == 0) ? 9 : getInit - 1;
 
-				for (int i = 0; i < 10; i++) {
+				for (var i = 0; i < 10; i++) {
 					if (i != getInit) {
 						SetSolColor(i, 1);
 					}
@@ -147,17 +127,12 @@ public class scr_colorCode : MonoBehaviour {
 				break;
 
 			case 1:
-				for (int i = 0; i < 8; i++) {
+				for (var i = 0; i < 8; i++) {
 					var nowCheck = i + ((i > 3) ? 1 : 0);
 
 					if (ruleList[0](nowCheck)) {
 						solColors[nowCheck + 1] = (solColors[nowCheck + 1] == 0) ? 1 : 0;
-
-						if (i <= 3) {
-							i = 3;
-						} else {
-							i = 7;
-						}
+                        i = (i <= 3) ? 3 : 7;
 					}
 				}
 				break;
@@ -165,16 +140,13 @@ public class scr_colorCode : MonoBehaviour {
 			case 2:
 				var pressed = 1;
 
-				for (int i = 0; i < 3; i++) {
+				for (var i = 0; i < 3; i++) {
 					if (topRow.Count(x => x == i) >= 3) {
-						for (int j = 0; j < 5; j++) {
-							if (solColors[j] == i) {
+						for (var j = 0; j < 5; j++) {
+							if (solColors[j] == i) 
 								SetSolColor(j, pressed++);
-							}
 
-							if (pressed > 2) {
-								break;
-							}
+							if (pressed > 2) break;
 						}
 
 						break;
@@ -191,25 +163,20 @@ public class scr_colorCode : MonoBehaviour {
 
 				var tempCount = 0;
 
-				for (int i = 0; i < 10; i++) {
-					if (switchCols[1, i] == -1) {
-						solColors[switchCols[0, i]] = tempCols[tempCount++];
-					} else {
-						solColors[switchCols[0, i]] = solColors[switchCols[1, i]];
-					}
-				}
+				for (var i = 0; i < 10; i++)
+                    solColors[switchCols[0, i]] = (switchCols[1, i] == -1) ? tempCols[tempCount++] : solColors[switchCols[1, i]];
 				break;
 
 			case 4:
-				for (int i = 0; i < 3; i++) {
+				for (var i = 0; i < 3; i++) {
 					if (topRow.All(x => x == i)) {
-						for (int j = 0; j < 3; j++) {
+						for (var j = 0; j < 3; j++) {
 							SetSolColor(j + j, 1);
 						}
 					}
 
 					if (bottomRow.All(x => x == i)) {
-						for (int j = 0; j < 3; j++) {
+						for (var j = 0; j < 3; j++) {
 							SetSolColor(5 + (j + j), 1);
 						}
 					}
@@ -217,11 +184,11 @@ public class scr_colorCode : MonoBehaviour {
 				break;
 
 			case 5:
-				for (int i = 0; i < 5; i++) {
+				for (var i = 0; i < 5; i++) {
 					if (ruleList[1](i)) {
 						solColors[i] = 2;
 
-						if (int.Parse(serialNum[5].ToString()) % 2 == 0) {
+						if (int.Parse(serialNum.Last().ToString()) % 2 == 0) {
 							solColors[i + 5] = 1;
 						} else {
 							solColors[i + 5] = 0;
@@ -234,9 +201,8 @@ public class scr_colorCode : MonoBehaviour {
 				if (!solColors.Contains(0)) {
 					var setColors = new[] { 1, 5, 8 };
 
-					for (int i = 0; i < 3; i++) {
+					for (var i = 0; i < 3; i++)
 						solColors[setColors[i]] = 0;
-					}
 				}
 				break;
 
@@ -244,7 +210,7 @@ public class scr_colorCode : MonoBehaviour {
 				var greenCount = 0;
 
 				if (solColors.Count(x => x == 1) > 5) {
-					for (int i = 0; i < 10; i++) {
+					for (var i = 0; i < 10; i++) {
 						if (solColors[i] == 1) {
 							greenCount++;
 
@@ -259,26 +225,22 @@ public class scr_colorCode : MonoBehaviour {
 				break;
 
 			case 8:
-				for (int i = 0; i < 6; i++) {
+				for (var i = 0; i < 6; i++) {
 					var nowCheck = i + ((i > 2) ? 2 : 0);
 
 					if (ruleList[2](nowCheck)) {
 						SetSolColor(nowCheck + 1, 1);
-
-						if (i <= 2) {
-							i = 2;
-						} else {
-							i = 5;
-						}
+                        i = (i <= 2) ? 2 : 5;
 					}
 				}
 				break;
 
 			case 9:
-				for (int i = 0; i < 4; i++) {
+				for (var i = 0; i < 4; i++) {
 					if (ruleList[3](i)) {
 						SetSolColor(i, 2);
 						SetSolColor(i + 6, 2);
+
 						break;
 					}
 				}
@@ -290,9 +252,7 @@ public class scr_colorCode : MonoBehaviour {
 		BombAudio.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, transform);
 		ModuleSelect.AddInteractionPunch();
 
-		if (moduleSolved) {
-			return;
-		}
+		if (moduleSolved) return;
 
 		nowColors[buttonPressed]++;
 		nowColors[buttonPressed] %= 3;
@@ -308,10 +268,8 @@ public class scr_colorCode : MonoBehaviour {
 		BombAudio.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, transform);
 		ModuleSelect.AddInteractionPunch();
 
-		if (moduleSolved) {
-			return;
-		}
-			
+		if (moduleSolved) return;
+		
 		if (nowColors.SequenceEqual(solColors)) {
 			if (!solvedFirst) {
 				ModuleLights[0].GetComponent<Renderer>().material.color = new Color32(239, 228, 176, 255);
@@ -324,9 +282,8 @@ public class scr_colorCode : MonoBehaviour {
 				ModuleLights[1].transform.GetChild(0).GetComponent<Light>().intensity = 40.0f;
 				BombModule.HandlePass();
 
-				for (int i = 0; i < 10; i++) {
+				for (var i = 0; i < 10; i++)
 					ModuleButtons[i].GetComponent<Renderer>().material.color = Color.gray;
-				}
 
 				moduleSolved = true;
 				Debug.LogFormat(@"[Ten-Button Color Code #{0}] Module solved!", moduleId); 
@@ -338,9 +295,9 @@ public class scr_colorCode : MonoBehaviour {
 		}
 	}
 
-	#pragma warning disable 414
+#pragma warning disable 414
 	private readonly string TwitchHelpMessage = @"!{0} press 1 2 3... (buttons to press [from 1 to 10]) | !{0} submit/sub/s (submits current combination)]";
-	#pragma warning restore 414
+#pragma warning restore 414
 
 	KMSelectable[] ProcessTwitchCommand(string command) {
 		command = command.ToLowerInvariant().Trim();
@@ -348,10 +305,10 @@ public class scr_colorCode : MonoBehaviour {
 		if (Regex.IsMatch(command, @"^press +[0-9^, |&]+$")) {
 			command = command.Substring(6).Trim();
 
-			var presses = command.Split(new[] { ',', ' ', '|', '&' }, System.StringSplitOptions.RemoveEmptyEntries);
+			var presses = command.Split(new[] { ',', ' ', '|', '&' }, StringSplitOptions.RemoveEmptyEntries);
 			var pressList = new List<KMSelectable>();
 
-			for (int i = 0; i < presses.Length; i++) {
+			for (var i = 0; i < presses.Length; i++) {
 				if (Regex.IsMatch(presses[i], @"^[0-9]{1,2}$")) {
 					pressList.Add(ModuleButtons[Math.Clamp(Math.Max(1, int.Parse(presses[i].ToString())) - 1, 0, ModuleButtons.Length - 1)]);
 				}
@@ -360,9 +317,7 @@ public class scr_colorCode : MonoBehaviour {
 			return pressList.ToArray();
 		}
 
-		if (Regex.IsMatch(command, @"^(submit|sub|s)$")) {
-			return new[] { SubmitButton };
-		}
+		if (Regex.IsMatch(command, @"^(submit|sub|s)$")) return new[] { SubmitButton };
 
 		return null;
 	}

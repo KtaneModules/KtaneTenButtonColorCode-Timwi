@@ -82,9 +82,9 @@ public class TestSelectable : MonoBehaviour
         {
             return;
         }
-        for (int i = 0; i <= Children.Length / ChildRowLength; i++)
+        for (var i = 0; i <= Children.Length / ChildRowLength; i++)
         {
-            for (int j = 0; j < ChildRowLength; j++)
+            for (var j = 0; j < ChildRowLength; j++)
             {
                 int num = i * ChildRowLength + j;
                 if (num < Children.Length && Children[num] != null)
@@ -176,9 +176,9 @@ public class TestSelectable : MonoBehaviour
         }
 
         int num = Mathf.Max(Parent.ChildRowLength, Parent.Children.Length / Parent.ChildRowLength);
-        for (int i = 0; i < num; i++)
+        for (var i = 0; i < num; i++)
         {
-            for (int j = 1; j < num; j++)
+            for (var j = 1; j < num; j++)
             {
                 TestSelectable childInDirection = GetChildInDirection(direction, i, j);
                 if (childInDirection != null)
@@ -189,9 +189,9 @@ public class TestSelectable : MonoBehaviour
         }
         if ((Parent != null && (direction == Direction.Down || direction == Direction.Up) && Parent.AllowSelectionWrapY) || ((direction == Direction.Left || direction == Direction.Right) && Parent.AllowSelectionWrapX))
         {
-            for (int k = 0; k < num; k++)
+            for (var k = 0; k < num; k++)
             {
-                for (int l = -num; l < 0; l++)
+                for (var l = -num; l < 0; l++)
                 {
                     TestSelectable childInDirection2 = GetChildInDirection(direction, k, l);
                     if (childInDirection2 != null)
@@ -251,7 +251,7 @@ public class TestSelectable : MonoBehaviour
             {
                 return Children[DefaultSelectableIndex];
             }
-            for (int i = 0; i < Children.Length; i++)
+            for (var i = 0; i < Children.Length; i++)
             {
                 if (Children[i] != null)
                 {
@@ -268,7 +268,7 @@ public class TestSelectable : MonoBehaviour
         {
             this.SelectableArea.DeactivateSelectableArea();
         }
-        for (int i = 0; i < Children.Length; i++)
+        for (var i = 0; i < Children.Length; i++)
         {
             if (Children[i] != null)
             {
@@ -282,7 +282,7 @@ public class TestSelectable : MonoBehaviour
 
     public void DeactivateImmediateChildSelectableAreas()
     {
-        for (int i = 0; i < Children.Length; i++)
+        for (var i = 0; i < Children.Length; i++)
         {
             if (Children[i] != null)
             {
@@ -308,7 +308,7 @@ public class TestSelectable : MonoBehaviour
 
         while (parent != newParent && parent != null)
         {
-            for (int i = 0; i < parent.Children.Length; i++)
+            for (var i = 0; i < parent.Children.Length; i++)
             {
                 if (parent.Children[i] != null)
                 {

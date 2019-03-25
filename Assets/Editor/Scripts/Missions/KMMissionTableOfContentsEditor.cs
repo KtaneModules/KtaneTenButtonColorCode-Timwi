@@ -120,7 +120,7 @@ public class KMMissionTableOfContentsEditor : Editor
 
         sectionLists = new List<TableOfContentsSectionList>();
 
-        for (int i = 0; i < sections.arraySize; i++)
+        for (var i = 0; i < sections.arraySize; i++)
         {
             SerializedProperty section = sections.GetArrayElementAtIndex(i);
             TableOfContentsSectionList list = new TableOfContentsSectionList(this, serializedObject, section, i + 1);
@@ -149,7 +149,7 @@ public class KMMissionTableOfContentsEditor : Editor
 
         scrollPos = EditorGUILayout.BeginScrollView(scrollPos);
 
-        for (int i = 0; i < sectionsProperty.arraySize; i++)
+        for (var i = 0; i < sectionsProperty.arraySize; i++)
         {
             DrawSection(i);
             EditorGUILayout.Separator();

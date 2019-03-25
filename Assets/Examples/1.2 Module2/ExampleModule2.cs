@@ -24,7 +24,7 @@ public class ExampleModule2 : MonoBehaviour
         GetComponent<KMSelectable>().OnDeselect += OnDeselect;
         GetComponent<KMSelectable>().OnHighlight += OnHighlight;
 
-        for (int i = 0; i < buttons.Length; i++)
+        for (var i = 0; i < buttons.Length; i++)
         {
             string label = i == correctIndex ? "A" : "B";
 

@@ -50,7 +50,7 @@ public class KMMissionEditor : Editor
 
             SerializedProperty componentPoolListProperty = serializedObject.FindProperty("GeneratorSetting.ComponentPools");
             EditorGUI.indentLevel++;
-            for (int i = 0; i < componentPoolListProperty.arraySize; i++)
+            for (var i = 0; i < componentPoolListProperty.arraySize; i++)
             {
                 DrawComponentPool(componentPoolListProperty, i);
             }
@@ -257,7 +257,7 @@ public class KMMissionEditor : Editor
                         //Solvable
                         EditorGUILayout.BeginVertical();
                         EditorGUILayout.LabelField("Solvable:");
-                        for (int i = 0; i < componentTypes.Length; i++)
+                        for (var i = 0; i < componentTypes.Length; i++)
                         {
                             KMComponentPool.ComponentTypeEnum componentType = (KMComponentPool.ComponentTypeEnum)componentTypes.GetValue(i);
 
@@ -274,7 +274,7 @@ public class KMMissionEditor : Editor
                         using (new EditorGUILayout.VerticalScope())
                         {
                             EditorGUILayout.LabelField("Needy:");
-                            for (int i = 0; i < componentTypes.Length; i++)
+                            for (var i = 0; i < componentTypes.Length; i++)
                             {
                                 KMComponentPool.ComponentTypeEnum componentType = (KMComponentPool.ComponentTypeEnum)componentTypes.GetValue(i);
 

@@ -63,7 +63,7 @@ public class TestHighlightable : MonoBehaviour
                 highlightMaterial = highlight.GetComponent<Renderer>().sharedMaterial; // use material in the highlight prefab
             }
             Material[] highlightMaterials = new Material[materialCount];
-            for (int i = 0; i < materialCount; i++)
+            for (var i = 0; i < materialCount; i++)
             {
                 highlightMaterials[i] = highlightMaterial;
             }

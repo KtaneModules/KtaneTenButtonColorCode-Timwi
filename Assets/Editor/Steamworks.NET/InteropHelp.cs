@@ -95,7 +95,7 @@ namespace Steamworks {
 				}
 
 				m_Strings = new IntPtr[strings.Count];
-				for (int i = 0; i < strings.Count; ++i) {
+				for (var i = 0; i < strings.Count; ++i) {
 					byte[] strbuf = new byte[Encoding.UTF8.GetByteCount(strings[i]) + 1];
 					Encoding.UTF8.GetBytes(strings[i], 0, strings[i].Length, strbuf, 0);
 					m_Strings[i] = Marshal.AllocHGlobal(strbuf.Length);
@@ -148,7 +148,7 @@ namespace Steamworks {
 
 			m_pNativeArray = Marshal.AllocHGlobal(Marshal.SizeOf(typeof(IntPtr)) * filters.Length);
 			m_pArrayEntries = Marshal.AllocHGlobal(sizeOfMMKVP * filters.Length);
-			for (int i = 0; i < filters.Length; ++i) {
+			for (var i = 0; i < filters.Length; ++i) {
 				Marshal.StructureToPtr(filters[i], new IntPtr(m_pArrayEntries.ToInt64() + (i * sizeOfMMKVP)), false);
 			}
 
