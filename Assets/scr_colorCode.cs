@@ -17,16 +17,16 @@ public class scr_colorCode : MonoBehaviour {
 	public GameObject[] ModuleLights;
 
 	readonly Color[] buttonColors = { new Color32(255, 58, 58, 255), new Color32(0, 226, 26, 255), new Color32(0, 136, 255, 255) };
-	int[] nowColors = new int[10];
+    readonly int[] nowColors = new int[10];
 	readonly int[] prevColors = new int[10];
-	int[] solColors = new int[10];
+    readonly int[] solColors = new int[10];
     readonly string[] colorNames = { "Red", "Green", "Blue" };
 
 	string serialNum = "";
 	int initRules;
 	delegate bool checkRules(int x);
 	checkRules[] ruleList;
-	bool nextStage, solvedFirst;
+	bool solvedFirst;
 
 	bool moduleSolved;
 
@@ -35,33 +35,21 @@ public class scr_colorCode : MonoBehaviour {
 
 	void Start() {
 		moduleId = moduleIdCounter++;
-		ShuffleColors(false);
 
-		for (var i = 0; i < 10; i++) {
-			var j = i;
-
-			ModuleButtons[i].OnInteract += delegate() {
-				OnButtonPress(j);
-
-				return false;
-			};
-		}
+		for (var i = 0; i < 10; i++)
+			ModuleButtons[i].OnInteract += OnButtonPress(i);
 
 		SubmitButton.GetComponent<Renderer>().material.color = new Color32(239, 228, 176, 255);
-		SubmitButton.OnInteract += delegate() {
-			OnSubmitPress();
-
-			return false;
-		};
+		SubmitButton.OnInteract += delegate () { OnSubmitPress(); return false; };
 
 		var lightScalar = transform.lossyScale.x;
-
 		for (var i = 0; i < ModuleLights.Length; i++)
 			ModuleLights[i].transform.GetChild(0).GetComponent<Light>().range *= lightScalar;
 
 		serialNum = BombInfo.GetSerialNumber();
 		initRules = int.Parse(serialNum.Last().ToString());
-		Debug.LogFormat(@"[Ten-Button Color Code #{0}] Starting rule number in stage 1 is: {1}", moduleId, initRules);
+		Debug.LogFormat(@"[Ten-Button Color Code #{0}] Stage 1 starting rule number: {1}", moduleId, initRules);
+		ShuffleColors(false);
 		ruleList = new checkRules[4] {
 			(x => solColors[x] == solColors[x + 1]),
 			(x => solColors[x] == solColors[x + 5]),
@@ -70,16 +58,6 @@ public class scr_colorCode : MonoBehaviour {
 		};
 
 		SetRules();
-	}
-
-	void Update() {
-		if (nextStage) {
-			ShuffleColors(false);
-            initRules = BombInfo.GetSerialNumberNumbers().Sum() % 10;
-			Debug.LogFormat(@"[Ten-Button Color Code #{0}] Starting rule number in stage 2 is: {1}", moduleId, initRules);
-			SetRules();
-			nextStage = false;
-		}
 	}
 
 	void ShuffleColors(bool returnPrev) {
@@ -94,7 +72,7 @@ public class scr_colorCode : MonoBehaviour {
 		}
 
 		if (!returnPrev) {
-			Debug.LogFormat(@"[Ten-Button Color Code #{0}] The initial colors for stage {1} are: {2}", moduleId, (solvedFirst) ? "2" : "1", string.Join(" ", nowColors.Select(x => colorNames[x]).ToArray()));
+			Debug.LogFormat(@"[Ten-Button Color Code #{0}] Stage {1} initial colors: {2}", moduleId, solvedFirst ? "2" : "1", string.Join("", nowColors.Select(x => colorNames[x].Substring(0, 1)).ToArray()));
 		}
 	}
 
@@ -103,11 +81,9 @@ public class scr_colorCode : MonoBehaviour {
 			if (!solvedFirst) {
 				GetRules((initRules + i) % 10);
 			} else {
-				GetRules((initRules + ((10 - i) % 10)) % 10);
+				GetRules((initRules + 10 - i) % 10);
 			}
 		}
-
-		Debug.LogFormat(@"[Ten-Button Color Code #{0}] The solution for stage {1} is: {2}", moduleId, (solvedFirst) ? 2 : 1, string.Join(" ", solColors.Select(x => colorNames[x]).ToArray()));
 	}
 
 	void GetRules(int rule) {
@@ -246,17 +222,24 @@ public class scr_colorCode : MonoBehaviour {
 				}
 				break;
 		}
+		Debug.LogFormat(@"[Ten-Button Color Code #{0}] After rule {1}: {2}", moduleId, rule, string.Join("", solColors.Select(x => colorNames[x].Substring(0, 1)).ToArray()));
 	}
 
-	void OnButtonPress(int buttonPressed) {
-		BombAudio.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, transform);
-		ModuleSelect.AddInteractionPunch();
+	KMSelectable.OnInteractHandler OnButtonPress(int buttonPressed)
+	{
+		return delegate
+		{
+			BombAudio.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, transform);
+			ModuleSelect.AddInteractionPunch();
 
-		if (moduleSolved) return;
+			if (moduleSolved)
+				return false;
 
-		nowColors[buttonPressed]++;
-		nowColors[buttonPressed] %= 3;
-		ModuleButtons[buttonPressed].GetComponent<Renderer>().material.color = buttonColors[nowColors[buttonPressed]];
+			nowColors[buttonPressed]++;
+			nowColors[buttonPressed] %= 3;
+			ModuleButtons[buttonPressed].GetComponent<Renderer>().material.color = buttonColors[nowColors[buttonPressed]];
+			return false;
+		};
 	}
 
 	void SetSolColor(int nowSol, int quanSol) {
@@ -274,10 +257,14 @@ public class scr_colorCode : MonoBehaviour {
 			if (!solvedFirst) {
 				ModuleLights[0].GetComponent<Renderer>().material.color = new Color32(239, 228, 176, 255);
 				ModuleLights[0].transform.GetChild(0).GetComponent<Light>().intensity = 40.0f;
-				nextStage = true;
+				Debug.LogFormat(@"[Ten-Button Color Code #{0}] You passed Stage 1!", moduleId);
 				solvedFirst = true;
-				Debug.LogFormat(@"[Ten-Button Color Code #{0}] You passed first stage!", moduleId);
-			} else {
+				initRules = BombInfo.GetSerialNumberNumbers().Sum() % 10;
+				Debug.LogFormat(@"[Ten-Button Color Code #{0}] Stage 2 starting rule number: {1}", moduleId, initRules);
+				ShuffleColors(false);
+				SetRules();
+			}
+			else {
 				ModuleLights[1].GetComponent<Renderer>().material.color = new Color32(239, 228, 176, 255);
 				ModuleLights[1].transform.GetChild(0).GetComponent<Light>().intensity = 40.0f;
 				BombModule.HandlePass();
@@ -289,14 +276,14 @@ public class scr_colorCode : MonoBehaviour {
 				Debug.LogFormat(@"[Ten-Button Color Code #{0}] Module solved!", moduleId); 
 			}
 		} else {
+			Debug.LogFormat(@"[Ten-Button Color Code #{0}] Strike! You submitted: {1}", moduleId,string.Join("", nowColors.Select(x => colorNames[x].Substring(0, 1)).ToArray()));
 			BombModule.HandleStrike();
 			ShuffleColors(true);
-			Debug.LogFormat(@"[Ten-Button Color Code #{0}] The combination you submitted was wrong, restarting stage.", moduleId);
 		}
 	}
 
 #pragma warning disable 414
-	private readonly string TwitchHelpMessage = @"!{0} press 1 2 3... (buttons to press [from 1 to 10]) | !{0} submit/sub/s (submits current combination)]";
+	private readonly string TwitchHelpMessage = @"!{0} press 1 2 3... (buttons to press [from 1 to 10]) | !{0} submit/sub/s (submits current combination)";
 #pragma warning restore 414
 
 	KMSelectable[] ProcessTwitchCommand(string command) {
