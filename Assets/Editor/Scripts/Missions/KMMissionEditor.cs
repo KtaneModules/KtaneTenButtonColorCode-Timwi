@@ -30,7 +30,10 @@ public class KMMissionEditor : Editor
             EditorGUILayout.SelectableLabel(string.Format("mod_{0}_{1}", ModConfig.ID, serializedObject.targetObject.name));
             EditorGUILayout.EndHorizontal();
 
-            EditorGUILayout.PropertyField(serializedObject.FindProperty("DisplayName"));
+            var displayNameProperty = serializedObject.FindProperty("DisplayName");
+            EditorGUILayout.PropertyField(displayNameProperty);
+            displayNameProperty.stringValue = displayNameProperty.stringValue.Trim();
+
             EditorGUILayout.PropertyField(serializedObject.FindProperty("Description"));
             EditorGUILayout.PropertyField(serializedObject.FindProperty("PacingEventsEnabled"));
 
@@ -50,7 +53,7 @@ public class KMMissionEditor : Editor
 
             SerializedProperty componentPoolListProperty = serializedObject.FindProperty("GeneratorSetting.ComponentPools");
             EditorGUI.indentLevel++;
-            for (var i = 0; i < componentPoolListProperty.arraySize; i++)
+            for (int i = 0; i < componentPoolListProperty.arraySize; i++)
             {
                 DrawComponentPool(componentPoolListProperty, i);
             }
@@ -257,7 +260,7 @@ public class KMMissionEditor : Editor
                         //Solvable
                         EditorGUILayout.BeginVertical();
                         EditorGUILayout.LabelField("Solvable:");
-                        for (var i = 0; i < componentTypes.Length; i++)
+                        for (int i = 0; i < componentTypes.Length; i++)
                         {
                             KMComponentPool.ComponentTypeEnum componentType = (KMComponentPool.ComponentTypeEnum)componentTypes.GetValue(i);
 
@@ -274,7 +277,7 @@ public class KMMissionEditor : Editor
                         using (new EditorGUILayout.VerticalScope())
                         {
                             EditorGUILayout.LabelField("Needy:");
-                            for (var i = 0; i < componentTypes.Length; i++)
+                            for (int i = 0; i < componentTypes.Length; i++)
                             {
                                 KMComponentPool.ComponentTypeEnum componentType = (KMComponentPool.ComponentTypeEnum)componentTypes.GetValue(i);
 
@@ -405,8 +408,13 @@ public class KMMissionEditor : Editor
         KMComponentPool componentPool = mission.GeneratorSetting.ComponentPools[poolIndex];
         SerializedProperty componentPools = serializedObject.FindProperty("GeneratorSetting.ComponentPools");
 
-        var element = componentPools.GetArrayElementAtIndex(poolIndex);
-        EditorGUILayout.PropertyField(element.FindPropertyRelative("ModTypes"), true);
+        var modTypesElement = componentPools.GetArrayElementAtIndex(poolIndex).FindPropertyRelative("ModTypes");
+        EditorGUILayout.PropertyField(modTypesElement, true);
+
+        // Trim whitespace from mod types
+        for (int i = 0; i < modTypesElement.arraySize; i++) {
+            modTypesElement.GetArrayElementAtIndex(i).stringValue = modTypesElement.GetArrayElementAtIndex(i).stringValue.Trim();
+        }
 
         //Clear any special flags if needed
         if (componentPool.ModTypes != null && componentPool.ModTypes.Count > 0)
