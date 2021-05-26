@@ -10,10 +10,10 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 615501dbe4f3fe94fbf4b564abb10237, type: 3}
   m_Name: ModConfig
-  m_EditorClassIdentifier: 
+  m_EditorClassIdentifier:
   id: TenButtonColorCode
   title: Ten-Button Color Code
-  description: "Who would've thought that only 3 colors would be such a problem\n\nMade
+  description: "This is a [b]re-upload[/b] of KingSlendy’s module. Please [url=https://steamcommunity.com/sharedfiles/filedetails/?id=1584004315]unsubscribe from the old version[/url].\n\nWho would've thought that only 3 colors would be such a problem\n\nMade
     by: KingSlendy\nOriginal idea by: Lumbud84\n\nmoduleID: TenButtonColorCode\n\nManual
     HTML: https://ktane.timwi.de/HTML/Ten-Button%20Color%20Code.html\r\nManual PDF:
     https://ktane.timwi.de/PDF/Ten-Button%20Color%20Code.pdf"

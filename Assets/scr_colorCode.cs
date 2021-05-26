@@ -382,9 +382,7 @@ public class scr_colorCode : MonoBehaviour
 
     IEnumerator TwitchHandleForcedSolve()
     {
-        int times = 0;
-        if (solvedFirstStage) times++;
-        for (int i = times; i < 2; i++)
+        while (!moduleSolved)
         {
             for (int j = 0; j < 10; j++)
             {
@@ -395,7 +393,7 @@ public class scr_colorCode : MonoBehaviour
                 }
             }
             SubmitButton.OnInteract();
-            yield return new WaitForSeconds(0.1f);
+            yield return new WaitForSeconds(0.25f);
         }
     }
 }
