@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -377,5 +378,24 @@ public class scr_colorCode : MonoBehaviour
             return new[] { SubmitButton };
 
         return null;
+    }
+
+    IEnumerator TwitchHandleForcedSolve()
+    {
+        int times = 0;
+        if (solvedFirstStage) times++;
+        for (int i = times; i < 2; i++)
+        {
+            for (int j = 0; j < 10; j++)
+            {
+                while (nowColors[j] != solColors[j])
+                {
+                    ModuleButtons[j].OnInteract();
+                    yield return new WaitForSeconds(0.1f);
+                }
+            }
+            SubmitButton.OnInteract();
+            yield return new WaitForSeconds(0.1f);
+        }
     }
 }
